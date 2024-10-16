@@ -73,16 +73,15 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
 }
 
 void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
-    free(*lista_zadan);
     if (*lista_zadan != NULL){
         free(*lista_zadan);  
         *lista_zadan = NULL;
     }
     (*rozmiar) = 0;
+    printf("usunieto wszystkie zadania \n");
 }
 
-
-void kontroler(){
+int main(){
     Zadanie *lista_zadan = NULL;
     int rozmiar_listy = 0;
     char wybor;
@@ -119,7 +118,4 @@ void kontroler(){
             // getchar();
         }
     }
-}
-int main(){
-    kontroler();
 }
