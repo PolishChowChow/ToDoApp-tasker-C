@@ -74,7 +74,11 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
 
 void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
     free(*lista_zadan);
-    printf("lista zadan zostala wyczyszczona");
+    if (*lista_zadan != NULL){
+        free(*lista_zadan);  
+        *lista_zadan = NULL;
+    }
+    (*rozmiar) = 0;
 }
 
 
