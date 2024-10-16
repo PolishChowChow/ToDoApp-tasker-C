@@ -48,11 +48,33 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
 }
 
 void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
+    int index;
+    Zadanie *nowa_lista_zadan = malloc((*rozmiar - 1) * sizeof(Zadanie));
+        if(nowa_lista_zadan == NULL){
+        printf("problem z alokacja nowej listy \n");
+        exit(1);
+    }
+    printf("Podaj numer zadanie, ktory chcesz usunac: \n");
+    scanf(" %d", &index);
 
+    index -= 1;
+    int j = 0;
+    for(int  i = 0;  i < *rozmiar; i++){
+        if(i != index){
+            nowa_lista_zadan[j] = (*lista_zadan)[i];
+            j++;
+        }
+    }
+
+    free(*lista_zadan);
+    *lista_zadan = nowa_lista_zadan;
+    (*rozmiar)--;
+    printf("zadanie zostalo usuniete \n");
 }
 
 void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
-
+    free(*lista_zadan);
+    printf("lista zadan zostala wyczyszczona");
 }
 
 
@@ -63,12 +85,12 @@ void kontroler(){
     while(1){
         printf("Co chcesz zrobić? \n");
         printf("1 - dodaj nowe zadanie \n");
-        printf("2- wyswietl wszystkie zadania \n");
+        printf("2 - wyswietl wszystkie zadania \n");
         printf("3 - usun zadanie \n");
-        printf("4 usun wszystkie zadania \n");
-        printf("5 wyjdz \n");
-        scanf("%c", &wybor);
-
+        printf("4 - usun wszystkie zadania \n");
+        printf("5 - wyjdz \n");
+        scanf(" %c", &wybor);
+        getchar();
         switch (wybor)
         {
         case '5':
@@ -78,27 +100,22 @@ void kontroler(){
         case '4':
             usun_wszystkie_zadania(&lista_zadan, &rozmiar_listy);
             break;
-
         case '3':
             usun_zadanie(&lista_zadan, &rozmiar_listy);
             break;
-
         case '2':
             wyswietl_liste_zadan(lista_zadan, rozmiar_listy);
             break;
-
         case '1':
             dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
             break;
         default:
             // system("clear");
             printf("Blad: nie ma takiego wyboru, sprobuj ponownie \n \n");
-            getchar();
-            break;
+            // getchar();
         }
     }
 }
 int main(){
     kontroler();
-    getchar();
 }
