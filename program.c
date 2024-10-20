@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include<string.h>
 #include<locale.h>
-
+#define ROZMIAR_NAZWA 30
+#define ROZMIAR_OPIS 100
+#define ROZMIAR_DATA_WYKONANIA 12
+#define ROZMIARY_BUFOROW [ROZMIAR_NAZWA, ROZMIAR_OPIS, ROZMIAR_DATA_WYKONANIA]
 typedef struct
 {
     char nazwa[50];
@@ -10,13 +13,31 @@ typedef struct
     char data_wykonania[10];
 } Zadanie;
 
-Zadanie stworz_zadanie(char nazwa[50], char opis[200], char data_wykonania[10]){
+Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char data_wykonania[ROZMIAR_DATA_WYKONANIA]){
     Zadanie nowe_zadanie;
     strcpy(nowe_zadanie.nazwa, nazwa);
     strcpy(nowe_zadanie.opis, opis);
     strcpy(nowe_zadanie.data_wykonania, data_wykonania);
     return nowe_zadanie;
 };
+
+void wstaw_linie(){
+    for(int i = 0; i < 148; i++){
+        switch (i)
+        {
+        case 0:
+        case 2:
+        case 33:
+        case 134:
+        case 147:
+            printf("+");
+            break;
+        default:
+            printf("-");
+        }
+    }
+    printf("\n");
+}
 
 void wyczysc_bufor(){
     int c;
@@ -66,11 +87,11 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
 }
 
 void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
-    printf("=========================================================================== \n");
+    wstaw_linie();
     for(int i = 0; i < rozmiar; i++){
-        printf("|%d|%s|%s|%s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
+        printf("|%d|%-30s|%-100s|%-12s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
+        wstaw_linie();
     }
-    printf("=========================================================================== \n");
 }
 
 void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
