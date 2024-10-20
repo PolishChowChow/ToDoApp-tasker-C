@@ -22,14 +22,14 @@ Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char 
 };
 
 void wstaw_linie(){
-    for(int i = 0; i < 148; i++){
+    for(int i = 0; i < 150; i++){
         switch (i)
         {
         case 0:
-        case 2:
-        case 33:
-        case 134:
-        case 147:
+        case 4:
+        case 35:
+        case 136:
+        case 149:
             printf("+");
             break;
         default:
@@ -83,14 +83,29 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     Zadanie nowe_zadanie = stworz_zadanie(nazwa, opis, data_wykonania);
     (*lista_zadan)[*rozmiar] = nowe_zadanie;
     (*rozmiar)++;
-    printf("utworzono zadanie \n");
+    system("clear");
+    printf("Utworzono nowe zadanie. \n\n");
 }
 
 void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
-    wstaw_linie();
-    for(int i = 0; i < rozmiar; i++){
-        printf("|%d|%-30s|%-100s|%-12s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
+    char naglowki[4][200] = {
+        "Lp.",
+        "Nazwa",
+        "Opis",
+        "Data"
+    };
+    if(rozmiar == 0){
+        printf("Brak zapisanych zadań.");
+    }
+    else{
+        printf("\n\n");
+        wstaw_linie();    
+        printf("|%s|%-30s|%-100s|%-12s| \n", naglowki[0], naglowki[1], naglowki[2], naglowki[3]);
         wstaw_linie();
+        for(int i = 0; i < rozmiar; i++){
+            printf("|%-3d|%-30s|%-100s|%-12s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
+            wstaw_linie();
+        }
     }
 }
 
@@ -116,7 +131,8 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     free(*lista_zadan);
     *lista_zadan = nowa_lista_zadan;
     (*rozmiar)--;
-    printf("zadanie zostalo usuniete \n");
+    system("clear");
+    printf("Zadanie zostało usunięte. \n\n");
 }
 
 void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
@@ -125,7 +141,8 @@ void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
         *lista_zadan = NULL;
     }
     (*rozmiar) = 0;
-    printf("usunieto wszystkie zadania \n");
+    system("cls");
+    printf("Usunięto wszystkie zadania. \n\n");
 }
 
 int main(){
@@ -134,12 +151,13 @@ int main(){
     char wybor;
     while(1){
         printf("Co chcesz zrobić? \n");
-        printf("1 - dodaj nowe zadanie \n");
-        printf("2 - wyswietl wszystkie zadania \n");
-        printf("3 - usun zadanie \n");
-        printf("4 - usun wszystkie zadania \n");
-        printf("5 - wyjdz \n");
+        printf("1 - Dodaj nowe zadanie. \n");
+        printf("2 - Wyświetl wszystkie zadania. \n");
+        printf("3 - Usuń zadanie. \n");
+        printf("4 - Usuń wszystkie zadania. \n");
+        printf("5 - Wyjdź. \n");
         scanf(" %c", &wybor);
+        system("clear");
         getchar();
         switch (wybor)
         {
@@ -160,9 +178,8 @@ int main(){
             dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
             break;
         default:
-            // system("clear");
-            printf("Blad: nie ma takiego wyboru, sprobuj ponownie \n \n");
-            // getchar();
+            system("clear");
+            printf("Błąd: nie ma takiego wyboru, spróbuj ponownie ponownie \n\n");
         }
     }
 }
