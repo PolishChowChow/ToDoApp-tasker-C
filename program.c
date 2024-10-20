@@ -17,16 +17,43 @@ Zadanie stworz_zadanie(char nazwa[50], char opis[200], char data_wykonania[10]){
     strcpy(nowe_zadanie.data_wykonania, data_wykonania);
     return nowe_zadanie;
 };
+
+void wyczysc_bufor(){
+    int c;
+    while((c = getchar()) != '\n' && c != EOF);
+}
+
+void sprawdz_input(char *bufor, int rozmiar, char *polecenie){
+    while(1){
+        printf("%s", polecenie);
+        fgets(bufor, rozmiar, stdin);
+
+
+        int dlugosc = strlen(bufor);
+        printf("len: %d \n", dlugosc);
+
+        if(strchr(bufor, '\n') == NULL) {
+            wyczysc_bufor();
+            printf("Wprowadzony tekst jest za dlugi, sprobuj ponownie \n");
+            continue;
+        }
+        else{
+            bufor[strcspn(bufor, "\n")] = '\0';
+        }
+        if(dlugosc <= 1){
+            printf("Blad: nie wprowadzono niczego, sprobuj ponownie \n");
+            continue;
+        }
+        break;
+    }
+}
 void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
-    char nazwa[50];
-    char opis[200];
-    char data_wykonania[10];
-    printf("Podaj nazwe \n");
-    scanf("%49s", nazwa);
-    printf("Podaj opis \n");
-    scanf("%199s", opis);
-    printf("Podaj date wykonania \n");
-    scanf("%9s", data_wykonania);
+    char nazwa[30];
+    char opis[100];
+    char data_wykonania[12];
+    sprawdz_input(nazwa, 30, "Podaj nazwę \n");
+    sprawdz_input(opis, 100, "Podaj opis \n");
+    sprawdz_input(data_wykonania, 12, "Podaj datę wykonania \n");
     *lista_zadan = realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
     if(*lista_zadan == NULL){
         printf("błąd w alokacji listy \n");
@@ -36,7 +63,6 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     (*lista_zadan)[*rozmiar] = nowe_zadanie;
     (*rozmiar)++;
     printf("utworzono zadanie \n");
-    getchar();
 }
 
 void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
