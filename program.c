@@ -48,11 +48,7 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie){
     while(1){
         printf("%s", polecenie);
         fgets(bufor, rozmiar, stdin);
-
-
         int dlugosc = strlen(bufor);
-        printf("len: %d \n", dlugosc);
-
         if(strchr(bufor, '\n') == NULL) {
             wyczysc_bufor();
             printf("Wprowadzony tekst jest za dlugi, sprobuj ponownie \n");
@@ -127,7 +123,6 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
             j++;
         }
     }
-
     free(*lista_zadan);
     *lista_zadan = nowa_lista_zadan;
     (*rozmiar)--;
