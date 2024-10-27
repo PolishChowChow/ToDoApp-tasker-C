@@ -71,7 +71,7 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     sprawdz_input(nazwa, 30, "Podaj nazwę \n");
     sprawdz_input(opis, 100, "Podaj opis \n");
     sprawdz_input(data_wykonania, 12, "Podaj datę wykonania \n");
-    *lista_zadan = realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
+    *lista_zadan = (Zadanie*)realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
     if(*lista_zadan == NULL){
         printf("błąd w alokacji listy \n");
         exit(0);
@@ -107,7 +107,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
 
 void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     int index;
-    Zadanie *nowa_lista_zadan = malloc((*rozmiar - 1) * sizeof(Zadanie));
+    Zadanie *nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
         if(nowa_lista_zadan == NULL){
         printf("problem z alokacja nowej listy \n");
         exit(1);
