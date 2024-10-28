@@ -1,17 +1,29 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <cstdlib>
 #include <stdlib.h>
-#include<string.h>
-#include<locale.h>
+#include <string.h>
+#include <locale.h>
 #define ROZMIAR_NAZWA 30
 #define ROZMIAR_OPIS 100
 #define ROZMIAR_DATA_WYKONANIA 12
 #define ROZMIARY_BUFOROW [ROZMIAR_NAZWA, ROZMIAR_OPIS, ROZMIAR_DATA_WYKONANIA]
+
+const char* wyczyszcz_ekran;
+
 typedef struct
 {
     char nazwa[50];
     char opis[200];
     char data_wykonania[10];
 } Zadanie;
+
+void ustaw_komende_do_czyszczenia(){    
+    #ifdef _WIN32
+        wyczyszcz_ekran = "cls";
+    #else
+        wyczyszcz_ekran = "clear";
+    #endif
+}
 
 Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char data_wykonania[ROZMIAR_DATA_WYKONANIA]){
     Zadanie nowe_zadanie;
@@ -79,7 +91,7 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     Zadanie nowe_zadanie = stworz_zadanie(nazwa, opis, data_wykonania);
     (*lista_zadan)[*rozmiar] = nowe_zadanie;
     (*rozmiar)++;
-    system("clear");
+    system(wyczyszcz_ekran);
     printf("Utworzono nowe zadanie. \n\n");
 }
 
@@ -126,7 +138,7 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     free(*lista_zadan);
     *lista_zadan = nowa_lista_zadan;
     (*rozmiar)--;
-    system("clear");
+    system(wyczyszcz_ekran);
     printf("Zadanie zostało usunięte. \n\n");
 }
 
@@ -136,11 +148,12 @@ void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
         *lista_zadan = NULL;
     }
     (*rozmiar) = 0;
-    system("cls");
+    system(wyczyszcz_ekran);
     printf("Usunięto wszystkie zadania. \n\n");
 }
 
 int main(){
+    ustaw_komende_do_czyszczenia();
     Zadanie *lista_zadan = NULL;
     int rozmiar_listy = 0;
     char wybor;
@@ -152,7 +165,7 @@ int main(){
         printf("4 - Usuń wszystkie zadania. \n");
         printf("5 - Wyjdź. \n");
         scanf(" %c", &wybor);
-        system("clear");
+        system(wyczyszcz_ekran);
         getchar();
         switch (wybor)
         {
@@ -173,7 +186,7 @@ int main(){
             dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
             break;
         default:
-            system("clear");
+            system(wyczyszcz_ekran);
             printf("Błąd: nie ma takiego wyboru, spróbuj ponownie ponownie \n\n");
         }
     }
