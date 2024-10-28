@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <cstdlib>
+// #include <cstdlib>
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
@@ -154,6 +154,7 @@ void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
 
 int main(){
     ustaw_komende_do_czyszczenia();
+    setlocale(LC_ALL, "pl-PL");
     Zadanie *lista_zadan = NULL;
     int rozmiar_listy = 0;
     char wybor;
