@@ -33,14 +33,14 @@ Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char 
 };
 
 void wstaw_linie(){
-    for(int i = 0; i < 150; i++){
+    for(int i = 0; i < 152; i++){
         switch (i)
         {
         case 0:
         case 4:
         case 35:
         case 136:
-        case 149:
+        case 151:
             printf("+");
             break;
         default:
@@ -85,7 +85,7 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     char data_wykonania[ROZMIAR_DATA_WYKONANIA];
     sprawdz_input(nazwa, ROZMIAR_NAZWA, "Podaj nazwę \n");
     sprawdz_input(opis, ROZMIAR_OPIS, "Podaj opis \n");
-    sprawdz_input(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n");
+    sprawdz_input_z_data(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n");
     *lista_zadan = (Zadanie*)realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
     if(*lista_zadan == NULL){
         printf("błąd w alokacji listy \n");
@@ -103,7 +103,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
         "Lp.",
         "Nazwa",
         "Opis",
-        "Data"
+        "Data Wykonania"
     };
     if(rozmiar == 0){
         printf("Brak zapisanych zadań.");
@@ -114,7 +114,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
         printf("|%s|%-30s|%-100s|%-12s| \n", naglowki[0], naglowki[1], naglowki[2], naglowki[3]);
         wstaw_linie();
         for(int i = 0; i < rozmiar; i++){
-            printf("|%-3d|%-30s|%-100s|%-12s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
+            printf("|%-3d|%-30s|%-100s|%-14s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
             wstaw_linie();
         }
     }
