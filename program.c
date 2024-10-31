@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <locale.h>
+#include <ctype.h>
 #define ROZMIAR_NAZWA 30
 #define ROZMIAR_OPIS 100
 #define ROZMIAR_DATA_WYKONANIA 12
@@ -55,7 +57,29 @@ void wyczysc_bufor(){
     while((c = getchar()) != '\n' && c != EOF);
 }
 
-void sprawdz_input(char *bufor, int rozmiar, char *polecenie){
+bool walidator_daty(char *data){
+    for(int i = 0; i < ROZMIAR_DATA_WYKONANIA; i++){
+        switch (i)
+        { // DD-MM-YYYY
+        case 2:
+        case 5:
+            if(data[i] != '-'){
+                printf("znak niezgadzajacy sie %c", data[i]);
+                return false;
+                
+            }
+            break;
+        default:
+            // if(!isdigit(data[i])){
+            //     return false;
+            // }
+            break;
+        }
+    }
+    return true;
+}
+
+void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(char* data)){
     while(1){
         printf("%s", polecenie);
         fgets(bufor, rozmiar, stdin);
@@ -72,20 +96,26 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie){
             printf("Blad: nie wprowadzono niczego, sprobuj ponownie \n");
             continue;
         }
+        if(walidator != NULL){
+            if(!walidator(bufor)){
+                // wyczysc_bufor();
+                printf("Nieprawidłowy format daty, spróbuj ponownie. \n");
+                continue;
+            }
+        }
+        
         break;
     }
 }
 
-void sprawdz_input_z_data(char *bufor, int rozmiar, char *polecenie){
-    sprawdz_input(bufor, rozmiar, polecenie);
-}
+
 void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     char nazwa[ROZMIAR_NAZWA];
     char opis[ROZMIAR_OPIS];
     char data_wykonania[ROZMIAR_DATA_WYKONANIA];
-    sprawdz_input(nazwa, ROZMIAR_NAZWA, "Podaj nazwę \n");
-    sprawdz_input(opis, ROZMIAR_OPIS, "Podaj opis \n");
-    sprawdz_input_z_data(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n");
+    sprawdz_input(nazwa, ROZMIAR_NAZWA, "Podaj nazwę \n", NULL);
+    sprawdz_input(opis, ROZMIAR_OPIS, "Podaj opis \n", NULL);
+    sprawdz_input(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n", walidator_daty);
     *lista_zadan = (Zadanie*)realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
     if(*lista_zadan == NULL){
         printf("błąd w alokacji listy \n");
