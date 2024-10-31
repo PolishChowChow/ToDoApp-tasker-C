@@ -12,9 +12,9 @@ const char* wyczyszcz_ekran;
 
 typedef struct
 {
-    char nazwa[50];
-    char opis[200];
-    char data_wykonania[10];
+    char nazwa[ROZMIAR_NAZWA];
+    char opis[ROZMIAR_OPIS];
+    char data_wykonania[ROZMIAR_DATA_WYKONANIA];
 } Zadanie;
 
 void ustaw_komende_do_czyszczenia(){    
@@ -76,13 +76,17 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie){
         break;
     }
 }
+
+void sprawdz_input_z_data(char *bufor, int rozmiar, char *polecenie){
+    sprawdz_input(bufor, rozmiar, polecenie);
+}
 void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
-    char nazwa[30];
-    char opis[100];
-    char data_wykonania[12];
-    sprawdz_input(nazwa, 30, "Podaj nazwę \n");
-    sprawdz_input(opis, 100, "Podaj opis \n");
-    sprawdz_input(data_wykonania, 12, "Podaj datę wykonania \n");
+    char nazwa[ROZMIAR_NAZWA];
+    char opis[ROZMIAR_OPIS];
+    char data_wykonania[ROZMIAR_DATA_WYKONANIA];
+    sprawdz_input(nazwa, ROZMIAR_NAZWA, "Podaj nazwę \n");
+    sprawdz_input(opis, ROZMIAR_OPIS, "Podaj opis \n");
+    sprawdz_input(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n");
     *lista_zadan = (Zadanie*)realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
     if(*lista_zadan == NULL){
         printf("błąd w alokacji listy \n");
