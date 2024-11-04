@@ -56,24 +56,58 @@ void wyczysc_bufor(){
     int c;
     while((c = getchar()) != '\n' && c != EOF);
 }
-
+// 1, 3, 5, 7, 8, 10, 12
+// 2, 4, 6, 9, 11
+bool XOR(bool a, bool b){
+    return (a && !b) || (!a && b);
+}// 10-10-2024
 bool walidator_daty(char *data){
+    int rok;
+    int miesiac;
+    int dzien;
+    int is_not_rok_przestepny = 2;
     for(int i = 0; i < ROZMIAR_DATA_WYKONANIA; i++){
         switch (i)
-        { // DD-MM-YYYY
+        {
         case 2:
         case 5:
             if(data[i] != '-'){
-                printf("znak niezgadzajacy sie %c", data[i]);
                 return false;
-                
             }
             break;
-        default:
-            // if(!isdigit(data[i])){
-            //     return false;
-            // }
+        case 9:
+        case 10:
+        case 11:
             break;
+        default:
+            if(!isdigit(data[i])){
+                return false;
+            }
+            break;
+        }
+    }
+    dzien = data[0] + data[1] - '0';
+    miesiac = data[3] + data[4] - '0';
+    rok = data[8] + data[9] - '0';
+    if(miesiac > 12 || miesiac < 0 || rok < 0 || dzien < 0){
+        return false;
+    }
+    if(rok % 400 == 0 || (rok % 4 == 0 && rok % 100 != 0 )){
+        is_not_rok_przestepny = 0;
+    }
+    if(miesiac == 2 && dzien + is_not_rok_przestepny > 29){
+        return false;
+    }
+    if(
+        XOR(miesiac < 7, miesiac % 2 == 0)
+    ){
+        if(dzien > 31){
+            return false;
+        }
+    }
+    else{
+        if(dzien > 30){
+            return false
         }
     }
     return true;
