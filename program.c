@@ -56,11 +56,10 @@ void wyczysc_bufor(){
     int c;
     while((c = getchar()) != '\n' && c != EOF);
 }
-// 1, 3, 5, 7, 8, 10, 12
-// 2, 4, 6, 9, 11
+
 bool XOR(bool a, bool b){
     return (a && !b) || (!a && b);
-}// 10-10-2024
+}
 bool walidator_daty(char *data){
     int rok;
     int miesiac;
@@ -86,10 +85,10 @@ bool walidator_daty(char *data){
             break;
         }
     }
-    dzien = data[0] + data[1] - '0';
-    miesiac = data[3] + data[4] - '0';
-    rok = data[8] + data[9] - '0';
-    if(miesiac > 12 || miesiac < 0 || rok < 0 || dzien < 0){
+    dzien = (data[0] - '0') * 10 + (data[1] - '0');
+    miesiac = (data[3] - '0') * 10 + (data[4] - '0');
+    rok = (data[6] - '0') * 1000 + (data[7] - '0') * 100 + (data[8] - '0') * 10 + (data[9] - '0');
+    if(miesiac > 12 || miesiac < 0 || rok < 2024 || dzien < 0){
         return false;
     }
     if(rok % 400 == 0 || (rok % 4 == 0 && rok % 100 != 0 )){
@@ -107,7 +106,7 @@ bool walidator_daty(char *data){
     }
     else{
         if(dzien > 30){
-            return false
+            return false;
         }
     }
     return true;
