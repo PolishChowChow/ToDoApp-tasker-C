@@ -184,6 +184,10 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
 }
 
 void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
+    if(*rozmiar == 0){
+        printf("Nie można usunąć zadania z pustej listy zadań. \n\n");
+        return;
+    }
     int index;
     Zadanie *nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
         if(nowa_lista_zadan == NULL){
