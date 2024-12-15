@@ -228,7 +228,7 @@ int main(){
     Zadanie *lista_zadan = NULL;
     int rozmiar_listy = 0;
     char wybor;
-    while(1){
+    while(wybor != '5'){
         printf("Co chcesz zrobić? \n");
         printf("1 - Dodaj nowe zadanie. \n");
         printf("2 - Wyświetl wszystkie zadania. \n");
@@ -242,7 +242,6 @@ int main(){
         {
         case '5':
             free(lista_zadan);
-            exit(0);
             break;
         case '4':
             usun_wszystkie_zadania(&lista_zadan, &rozmiar_listy);
