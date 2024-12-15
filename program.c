@@ -57,9 +57,6 @@ void wyczysc_bufor(){
     while((c = getchar()) != '\n' && c != EOF);
 }
 
-bool XOR(bool a, bool b){
-    return (a && !b) || (!a && b);
-}
 bool walidator_daty(char *data){
     int rok;
     int miesiac;
@@ -97,9 +94,7 @@ bool walidator_daty(char *data){
     if(miesiac == 2 && dzien + is_not_rok_przestepny > 29){
         return false;
     }
-    if(
-        XOR(miesiac < 7, miesiac % 2 == 0)
-    ){
+    if(miesiac < 7 ^  miesiac % 2 == 0){
         if(dzien > 31){
             return false;
         }
@@ -113,32 +108,29 @@ bool walidator_daty(char *data){
 }
 
 void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(char* data)){
-    while(1){
+    bool poprawny_input;
+    do{
+	poprawny_input = true;
         printf("%s", polecenie);
         fgets(bufor, rozmiar, stdin);
         int dlugosc = strlen(bufor);
         if(strchr(bufor, '\n') == NULL) {
             wyczysc_bufor();
-            printf("Wprowadzony tekst jest za dlugi, sprobuj ponownie \n");
-            continue;
+            printf("Wprowadzony tekst jest za długi, spróbuj ponownie. \n");
+            poprawny_input = false;
         }
         else{
             bufor[strcspn(bufor, "\n")] = '\0';
         }
         if(dlugosc <= 1){
-            printf("Blad: nie wprowadzono niczego, sprobuj ponownie \n");
-            continue;
+            printf("Błąd: nie wprowadzono niczego, spróbuj ponownie. \n");
+            poprawny_input = false;
         }
-        if(walidator != NULL){
-            if(!walidator(bufor)){
-                // wyczysc_bufor();
-                printf("Nieprawidłowy format daty, spróbuj ponownie. \n");
-                continue;
-            }
+        if(walidator != NULL && !walidator(bufor)){
+                printf("Podano nieprawidłowy format danych, spróbuj ponownie.  \n");
+                poprawny_input = false;
         }
-        
-        break;
-    }
+    }while(!poprawny_input);
 }
 
 
@@ -151,7 +143,7 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     sprawdz_input(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n", walidator_daty);
     *lista_zadan = (Zadanie*)realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
     if(*lista_zadan == NULL){
-        printf("błąd w alokacji listy \n");
+        printf("Błąd w alokacji listy. \n");
         exit(0);
     }
     Zadanie nowe_zadanie = stworz_zadanie(nazwa, opis, data_wykonania);
@@ -166,7 +158,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
         "Lp.",
         "Nazwa",
         "Opis",
-        "Data Wykonania"
+        "Data wykonania"
     };
     if(rozmiar == 0){
         printf("Brak zapisanych zadań.");
@@ -191,10 +183,10 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     int index;
     Zadanie *nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
         if(nowa_lista_zadan == NULL){
-        printf("problem z alokacja nowej listy \n");
+        printf("Problem z alokacja nowej listy. \n");
         exit(1);
     }
-    printf("Podaj numer zadanie, ktory chcesz usunac: \n");
+    printf("Podaj numer zadania, ktory chcesz usunąć: \n");
     scanf(" %d", &index);
 
     index -= 1;
@@ -257,7 +249,7 @@ int main(){
             break;
         default:
             system(wyczyszcz_ekran);
-            printf("Błąd: nie ma takiego wyboru, spróbuj ponownie ponownie \n\n");
+            printf("Błąd: nie ma takiego wyboru, spróbuj ponownie. \n\n");
         }
     }
 }
