@@ -9,7 +9,7 @@
 #define ROZMIAR_DATA_WYKONANIA 12
 #define ROZMIARY_BUFOROW [ROZMIAR_NAZWA, ROZMIAR_OPIS, ROZMIAR_DATA_WYKONANIA]
 
-const char* wyczyszcz_ekran;
+const char* wyczysc_ekran;
 
 typedef struct
 {
@@ -20,9 +20,9 @@ typedef struct
 
 void ustaw_komende_do_czyszczenia(){    
     #ifdef _WIN32
-        wyczyszcz_ekran = "cls";
+        wyczysc_ekran = "cls";
     #else
-        wyczyszcz_ekran = "clear";
+        wyczysc_ekran = "clear";
     #endif
 }
 
@@ -116,18 +116,21 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(
         int dlugosc = strlen(bufor);
         if(strchr(bufor, '\n') == NULL) {
             wyczysc_bufor();
-            printf("Wprowadzony tekst jest za długi, spróbuj ponownie. \n");
+	    system(wyczysc_ekran);
+            printf("Wprowadzony tekst jest za długi, spróbuj ponownie. \n\n");
             poprawny_input = false;
         }
         else{
             bufor[strcspn(bufor, "\n")] = '\0';
         }
         if(dlugosc <= 1){
-            printf("Błąd: nie wprowadzono niczego, spróbuj ponownie. \n");
+	    system(wyczysc_ekran);
+            printf("Błąd: nie wprowadzono niczego, spróbuj ponownie. \n\n");
             poprawny_input = false;
         }
         if(walidator != NULL && !walidator(bufor)){
-                printf("Podano nieprawidłowy format danych, spróbuj ponownie.  \n");
+		system(wyczysc_ekran);
+                printf("Podano nieprawidłowy format danych, spróbuj ponownie.  \n\n");
                 poprawny_input = false;
         }
     }while(!poprawny_input);
@@ -149,7 +152,7 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     Zadanie nowe_zadanie = stworz_zadanie(nazwa, opis, data_wykonania);
     (*lista_zadan)[*rozmiar] = nowe_zadanie;
     (*rozmiar)++;
-    system(wyczyszcz_ekran);
+    system(wyczysc_ekran);
     printf("Utworzono nowe zadanie. \n\n");
 }
 
@@ -176,19 +179,23 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
 }
 
 void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
+    int index;
+    Zadanie *nowa_lista_zadan;
     if(*rozmiar == 0){
         printf("Nie można usunąć zadania z pustej listy zadań. \n\n");
         return;
     }
-    int index;
-    Zadanie *nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
-        if(nowa_lista_zadan == NULL){
+    printf("Podaj numer zadania, które chcesz usunąć: \n");
+    scanf(" %d", &index);
+    if(index > (*rozmiar) || index < 0){
+	printf("Nie można usunąć zadania o nieistniejącym numerze. \n\n");
+        return;
+    }
+    nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
+    if(nowa_lista_zadan == NULL){
         printf("Problem z alokacja nowej listy. \n");
         exit(1);
     }
-    printf("Podaj numer zadania, ktory chcesz usunąć: \n");
-    scanf(" %d", &index);
-
     index -= 1;
     int j = 0;
     for(int  i = 0;  i < *rozmiar; i++){
@@ -200,7 +207,7 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     free(*lista_zadan);
     *lista_zadan = nowa_lista_zadan;
     (*rozmiar)--;
-    system(wyczyszcz_ekran);
+    system(wyczysc_ekran);
     printf("Zadanie zostało usunięte. \n\n");
 }
 
@@ -210,7 +217,7 @@ void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
         *lista_zadan = NULL;
     }
     (*rozmiar) = 0;
-    system(wyczyszcz_ekran);
+    system(wyczysc_ekran);
     printf("Usunięto wszystkie zadania. \n\n");
 }
 
@@ -228,7 +235,7 @@ int main(){
         printf("4 - Usuń wszystkie zadania. \n");
         printf("5 - Wyjdź. \n");
         scanf(" %c", &wybor);
-        system(wyczyszcz_ekran);
+        system(wyczysc_ekran);
         getchar();
         switch (wybor)
         {
@@ -248,7 +255,7 @@ int main(){
             dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
             break;
         default:
-            system(wyczyszcz_ekran);
+            system(wyczysc_ekran);
             printf("Błąd: nie ma takiego wyboru, spróbuj ponownie. \n\n");
         }
     }
