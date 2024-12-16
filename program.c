@@ -164,7 +164,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
         "Data wykonania"
     };
     if(rozmiar == 0){
-        printf("Brak zapisanych zadań.");
+        printf("Brak zapisanych zadań.\n\n");
     }
     else{
         printf("\n\n");
@@ -228,7 +228,7 @@ int main(){
     int rozmiar_listy = 0;
     char wybor;
     while(wybor != '5'){
-        printf("Co chcesz zrobić? \n");
+        printf("Witaj, co chcesz zrobić? \n");
         printf("1 - Dodaj nowe zadanie. \n");
         printf("2 - Wyświetl wszystkie zadania. \n");
         printf("3 - Usuń zadanie. \n");
