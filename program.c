@@ -263,7 +263,8 @@ int main() {
             case 5:
                 break;
             default:
-                wprintf(L"Nieznana opcja! \n");
+                system(wyczysc_ekran);
+                wprintf(L"Błąd: nie ma takiego wyboru, spróbuj ponownie.\n");
                 break;
         }
     } while (wybor != 5);
