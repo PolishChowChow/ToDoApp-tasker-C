@@ -1,27 +1,27 @@
-// definicja bibliotek i stałych
+//Biblioteki
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <locale.h>
 #include <ctype.h>
+#include <wchar.h>
+
+// Stałe
 #define ROZMIAR_NAZWA 30
 #define ROZMIAR_OPIS 100
 #define ROZMIAR_DATA_WYKONANIA 12
-#define ROZMIARY_BUFOROW [ROZMIAR_NAZWA, ROZMIAR_OPIS, ROZMIAR_DATA_WYKONANIA]
+const char *wyczysc_ekran;
 
-const char* wyczysc_ekran;
-
-// defincja struktury zadania ulatwiajaca obslugiwanie wielu pol
-typedef struct
-{
-    char nazwa[ROZMIAR_NAZWA];
-    char opis[ROZMIAR_OPIS];
-    char data_wykonania[ROZMIAR_DATA_WYKONANIA];
+// Struktura do przechowywania zadania
+typedef struct {
+    wchar_t nazwa[ROZMIAR_NAZWA];
+    wchar_t opis[ROZMIAR_OPIS];
+    wchar_t data_wykonania[ROZMIAR_DATA_WYKONANIA];
 } Zadanie;
 
-// ustawienie składni polecenia do egzekucji w zalezności od systemu operacyjnego
-void ustaw_komende_do_czyszczenia(){    
+// Funkcja do ustawiania komendy czyszczenia ekranu w zależności od systemu
+void ustaw_komende_do_czyszczenia() {    
     #ifdef _WIN32
         wyczysc_ekran = "cls";
     #else
@@ -29,187 +29,181 @@ void ustaw_komende_do_czyszczenia(){
     #endif
 }
 
-// utworzenie i zwrocenie struktury zadań utworzonej na podstawie danych wprowadzonych
-Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char data_wykonania[ROZMIAR_DATA_WYKONANIA]){
+// Funkcja tworzy zadanie na podstawie podanej nazwy, opisu oraz daty
+Zadanie stworz_zadanie(wchar_t nazwa[ROZMIAR_NAZWA], wchar_t opis[ROZMIAR_OPIS], wchar_t data_wykonania[ROZMIAR_DATA_WYKONANIA]) {
     Zadanie nowe_zadanie;
-    strcpy(nowe_zadanie.nazwa, nazwa);
-    strcpy(nowe_zadanie.opis, opis);
-    strcpy(nowe_zadanie.data_wykonania, data_wykonania);
+    wcscpy(nowe_zadanie.nazwa, nazwa);
+    wcscpy(nowe_zadanie.opis, opis);
+    wcscpy(nowe_zadanie.data_wykonania, data_wykonania);
     return nowe_zadanie;
-};
-
-// wyświetlenie linii w terminalu wraz z "przedziałkami"
-void wstaw_linie(){
-    for(int i = 0; i < 152; i++){
-        switch (i)
-        {
-        case 0:
-        case 4:
-        case 35:
-        case 136:
-        case 151:
-            printf("+");
-            break;
-        default:
-            printf("-");
-        }
-    }
-    printf("\n");
 }
 
-// czyszczenie buforu (wspomaga walidację danych i wprowadzanie ich)
-void wyczysc_bufor(){
+// Funkcja do wyświetlania linii w terminalu (oddzielanie wierszy tabeli)
+void wstaw_linie() {
+    for (int i = 0; i < 152; i++) {
+        switch (i) {
+            case 0:
+            case 4:
+            case 35:
+            case 136:
+            case 151:
+                wprintf(L"+");
+                break;
+            default:
+                wprintf(L"-");
+        }
+    }
+    wprintf(L"\n");
+}
+
+// Funkcja do czyszczenia buforu (ułatwia obsługę wprowadzania danych)
+void wyczysc_bufor() {
     int c;
-    while((c = getchar()) != '\n' && c != EOF);
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-// funkcja sprawdza czy podana data jest prawidłowego formatu "DD-MM-YYYY" oraz czy data istnieje (nie przepuści daty np. 29-02-2025)
-bool walidator_daty(char *data){
-    int rok;
-    int miesiac;
-    int dzien;
+// Funkcja walidująca format daty "DD-MM-YYYY"
+bool walidator_daty(wchar_t *data) {
+    int rok, miesiac, dzien;
     int is_not_rok_przestepny = 2;
-    for(int i = 0; i < ROZMIAR_DATA_WYKONANIA; i++){
-        switch (i)
-        {
-        case 2:
-        case 5:
-            if(data[i] != '-'){
-                return false;
-            }
-            break;
-        case 9:
-        case 10:
-        case 11:
-            break;
-        default:
-            if(!isdigit(data[i])){
-                return false;
-            }
-            break;
+    for (int i = 0; i < ROZMIAR_DATA_WYKONANIA; i++) {
+        switch (i) {
+            case 2:
+            case 5:
+                if (data[i] != '-') {
+                    return false;
+                }
+                break;
+            case 9:
+            case 10:
+            case 11:
+                break;
+            default:
+                if (!iswdigit(data[i])) {
+                    return false;
+                }
+                break;
         }
     }
-    dzien = (data[0] - '0') * 10 + (data[1] - '0');
-    miesiac = (data[3] - '0') * 10 + (data[4] - '0');
-    rok = (data[6] - '0') * 1000 + (data[7] - '0') * 100 + (data[8] - '0') * 10 + (data[9] - '0');
-    if(miesiac > 12 || miesiac < 0 || rok < 2024 || dzien < 0){
+    dzien = (data[0] - L'0') * 10 + (data[1] - L'0');
+    miesiac = (data[3] - L'0') * 10 + (data[4] - L'0');
+    rok = (data[6] - L'0') * 1000 + (data[7] - L'0') * 100 + (data[8] - L'0') * 10 + (data[9] - L'0');
+    
+    if (miesiac > 12 || miesiac < 1 || rok < 2024 || dzien < 1) {
         return false;
     }
-    if(rok % 400 == 0 || (rok % 4 == 0 && rok % 100 != 0 )){
+    if (rok % 400 == 0 || (rok % 4 == 0 && rok % 100 != 0)) {
         is_not_rok_przestepny = 0;
     }
-    if(miesiac == 2 && dzien + is_not_rok_przestepny > 29){
+    if (miesiac == 2 && dzien + is_not_rok_przestepny > 29) {
         return false;
     }
-    if(miesiac < 7 ^  miesiac % 2 == 0){
-        if(dzien > 31){
+    if (miesiac < 7 ^ miesiac % 2 == 0) {
+        if (dzien > 31) {
             return false;
         }
-    }
-    else{
-        if(dzien > 30){
+    } else {
+        if (dzien > 30) {
             return false;
         }
     }
     return true;
 }
 
-// podstawowy walidator wprowadzania danych użyty do każdego pola struktury Zadanie
-void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(char* data)){
+// Funkcja do sprawdzania i walidacji wprowadzanych danych
+void sprawdz_input(wchar_t *bufor, int rozmiar, wchar_t *polecenie, bool (*walidator)(wchar_t* data)) {
     bool poprawny_input;
-    do{
+    do {
         poprawny_input = true;
-        printf("%s", polecenie);
-        fgets(bufor, rozmiar, stdin);
-        int dlugosc = strlen(bufor);
-        if(strchr(bufor, '\n') == NULL) {
+        wprintf(L"%ls", polecenie);
+        fgetws(bufor, rozmiar, stdin);
+        int dlugosc = wcslen(bufor);
+        if (wcschr(bufor, L'\n') == NULL) {
             wyczysc_bufor();
-            system(wyczysc_ekran);
-            printf("Wprowadzony tekst jest za długi, spróbuj ponownie. \n\n");
+            wprintf(L"Wprowadzony tekst jest za długi, spróbuj ponownie. \n\n");
+            poprawny_input = false;
+        } else {
+            bufor[wcslen(bufor) - 1] = L'\0';
+        }
+        if (dlugosc <= 1) {
+            wprintf(L"Błąd: nie wprowadzono niczego, spróbuj ponownie. \n\n");
             poprawny_input = false;
         }
-        else{
-            bufor[strcspn(bufor, "\n")] = '\0';
-        }
-        if(dlugosc <= 1){
-            system(wyczysc_ekran);
-            printf("Błąd: nie wprowadzono niczego, spróbuj ponownie. \n\n");
+        if (walidator != NULL && !walidator(bufor)) {
+            wprintf(L"Podano nieprawidłowy format danych, spróbuj ponownie.  \n\n");
             poprawny_input = false;
         }
-        if(walidator != NULL && !walidator(bufor)){
-            system(wyczysc_ekran);
-            printf("Podano nieprawidłowy format danych, spróbuj ponownie.  \n\n");
-            poprawny_input = false;
-        }
-    } while(!poprawny_input);
+    } while (!poprawny_input);
 }
 
-// wstawienie zadania do listy zadań
-void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
-    char nazwa[ROZMIAR_NAZWA];
-    char opis[ROZMIAR_OPIS];
-    char data_wykonania[ROZMIAR_DATA_WYKONANIA];
-    sprawdz_input(nazwa, ROZMIAR_NAZWA, "Podaj nazwę \n", NULL);
-    sprawdz_input(opis, ROZMIAR_OPIS, "Podaj opis \n", NULL);
-    sprawdz_input(data_wykonania, ROZMIAR_DATA_WYKONANIA, "Podaj datę wykonania \n", walidator_daty);
+// Funkcja do dodawania zadania do listy
+void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar) {
+    wchar_t nazwa[ROZMIAR_NAZWA];
+    wchar_t opis[ROZMIAR_OPIS];
+    wchar_t data_wykonania[ROZMIAR_DATA_WYKONANIA];
+    sprawdz_input(nazwa, ROZMIAR_NAZWA, L"Podaj nazwę \n", NULL);
+    sprawdz_input(opis, ROZMIAR_OPIS, L"Podaj opis \n", NULL);
+    sprawdz_input(data_wykonania, ROZMIAR_DATA_WYKONANIA, L"Podaj datę wykonania \n", walidator_daty);
     *lista_zadan = (Zadanie*)realloc(*lista_zadan, (*rozmiar + 1) * sizeof(Zadanie));
-    if(*lista_zadan == NULL){
-        printf("Błąd w alokacji listy. \n");
+    if (*lista_zadan == NULL) {
+        wprintf(L"Błąd w alokacji listy. \n");
         exit(0);
     }
     Zadanie nowe_zadanie = stworz_zadanie(nazwa, opis, data_wykonania);
     (*lista_zadan)[*rozmiar] = nowe_zadanie;
     (*rozmiar)++;
     system(wyczysc_ekran);
-    printf("Utworzono nowe zadanie. \n\n");
+    wprintf(L"Utworzono nowe zadanie. \n\n");
 }
 
-// wyświetlanie listy zadań w formie tabelarycznej
-void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
-    char naglowki[4][200] = {
-        "Lp.",
-        "Nazwa",
-        "Opis",
-        "Data wykonania"
+// Funkcja do wyświetlania listy zadań w formie tabeli
+void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar) {
+    system(wyczysc_ekran);
+    wchar_t naglowki[4][200] = {
+        L"Lp.",
+        L"Nazwa",
+        L"Opis",
+        L"Data wykonania"
     };
-    if(rozmiar == 0){
-        printf("Brak zapisanych zadań.\n\n");
-    }
-    else{
-        printf("\n\n");
+    if (rozmiar == 0) {
+        wprintf(L"Brak zapisanych zadań.\n\n");
+    } else {
         wstaw_linie();    
-        printf("|%-3s|%-30s|%-100s|%-14s| \n", naglowki[0], naglowki[1], naglowki[2], naglowki[3]);
+        wprintf(L"|%-3ls|%-30ls|%-100ls|%-14ls| \n", naglowki[0], naglowki[1], naglowki[2], naglowki[3]);
         wstaw_linie();
-        for(int i = 0; i < rozmiar; i++){
-            printf("|%-3d|%-30s|%-100s|%-14s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
+        for (int i = 0; i < rozmiar; i++) {
+            wprintf(L"|%-3d|%-30ls|%-100ls|%-14ls| \n", i + 1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
             wstaw_linie();
         }
+        printf("\n");
     }
 }
 
-// usuwanie zadania z listy bazując na indeksie pokazanym przy wyświetlaniu listy zadań
-void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
+// Funkcja do usuwania zadania z listy
+void usun_zadanie(Zadanie **lista_zadan, int *rozmiar) {
     int index;
     Zadanie *nowa_lista_zadan;
-    if(*rozmiar == 0){
-        printf("Nie można usunąć zadania z pustej listy zadań. \n\n");
+    if (*rozmiar == 0) {
+        system(wyczysc_ekran);
+        wprintf(L"Nie można usunąć zadania z pustej listy zadań. \n\n");
         return;
     }
-    printf("Podaj numer zadania, które chcesz usunąć: \n");
-    scanf(" %d", &index);
-    if(index > (*rozmiar) || index < 0){
-	printf("Nie można usunąć zadania o nieistniejącym numerze. \n\n");
+    wprintf(L"Podaj numer zadania, które chcesz usunąć: \n");
+    scanf("%d", &index);
+    if (index > (*rozmiar) || index < 0) {
+        system(wyczysc_ekran);
+        wprintf(L"Nie można usunąć zadania o nieistniejącym numerze. \n\n");
         return;
     }
     nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
-    if(nowa_lista_zadan == NULL){
-        printf("Problem z alokacja nowej listy. \n");
+    if (nowa_lista_zadan == NULL) {
+        wprintf(L"Problem z alokacją nowej listy. \n");
         exit(1);
     }
     index -= 1;
     int j = 0;
-    for(int  i = 0;  i < *rozmiar; i++){
-        if(i != index){
+    for (int i = 0; i < *rozmiar; i++) {
+        if (i != index) {
             nowa_lista_zadan[j] = (*lista_zadan)[i];
             j++;
         }
@@ -218,57 +212,60 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     *lista_zadan = nowa_lista_zadan;
     (*rozmiar)--;
     system(wyczysc_ekran);
-    printf("Zadanie zostało usunięte. \n\n");
+    wprintf(L"Zadanie zostało usunięte. \n\n");
 }
 
-// całkowite czyszczenie listy zadań
-void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
-    if (*lista_zadan != NULL){
-        free(*lista_zadan);  
+// Funkcja do usuwania wszystkich zadań
+void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar) {
+    system(wyczysc_ekran);
+    if (*lista_zadan != NULL) {
+        free(*lista_zadan);
         *lista_zadan = NULL;
     }
     (*rozmiar) = 0;
-    system(wyczysc_ekran);
-    printf("Usunięto wszystkie zadania. \n\n");
+    wprintf(L"Usunięto wszystkie zadania. \n");
 }
 
-// głowna funkcja programu działająca w formie pętli, ktora sie wykonuje dopoki uzytkownik nie zdecyduje sie opuscic programu (wybierając opcję 5 z menu)
-int main(){
+// Funkcja główna
+int main() {
     ustaw_komende_do_czyszczenia();
-    setlocale(LC_ALL, "pl-PL");
+    setlocale(LC_CTYPE, "pl_PL.UTF-8"); 
+    system(wyczysc_ekran);
     Zadanie *lista_zadan = NULL;
-    int rozmiar_listy = 0;
-    char wybor;
-    while(wybor != '5'){
-        printf("Witaj, co chcesz zrobić? \n");
-        printf("1 - Dodaj nowe zadanie. \n");
-        printf("2 - Wyświetl wszystkie zadania. \n");
-        printf("3 - Usuń zadanie. \n");
-        printf("4 - Usuń wszystkie zadania. \n");
-        printf("5 - Wyjdź. \n");
-        scanf(" %c", &wybor);
-        system(wyczysc_ekran);
-        getchar();
-        switch (wybor)
-        {
-        case '5':
-            free(lista_zadan);
-            break;
-        case '4':
-            usun_wszystkie_zadania(&lista_zadan, &rozmiar_listy);
-            break;
-        case '3':
-            usun_zadanie(&lista_zadan, &rozmiar_listy);
-            break;
-        case '2':
-            wyswietl_liste_zadan(lista_zadan, rozmiar_listy);
-            break;
-        case '1':
-            dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
-            break;
-        default:
-            system(wyczysc_ekran);
-            printf("Błąd: nie ma takiego wyboru, spróbuj ponownie. \n\n");
+    int rozmiar = 0;
+    int wybor;
+
+    wprintf(L"ToDoApp(Tasker)\n\n");
+    do {
+        wprintf(L"MENU\n");
+        wprintf(L"1. Dodaj zadanie\n");
+        wprintf(L"2. Wyświetl listę zadań\n");
+        wprintf(L"3. Usuń zadanie\n");
+        wprintf(L"4. Usuń wszystkie zadania\n");
+        wprintf(L"5. Zakończ\n\n");
+        wprintf(L"Wybierz opcję: ");
+        scanf("%d", &wybor); 
+        wyczysc_bufor();
+        
+        switch (wybor) {
+            case 1:
+                dodaj_zadanie_do_listy(&lista_zadan, &rozmiar);
+                break;
+            case 2:
+                wyswietl_liste_zadan(lista_zadan, rozmiar);
+                break;
+            case 3:
+                usun_zadanie(&lista_zadan, &rozmiar);
+                break;
+            case 4:
+                usun_wszystkie_zadania(&lista_zadan, &rozmiar);
+                break;
+            case 5:
+                break;
+            default:
+                wprintf(L"Nieznana opcja! \n");
+                break;
         }
-    }
+    } while (wybor != 5);
+    return 0;
 }
