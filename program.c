@@ -12,7 +12,7 @@
 
 const char* wyczysc_ekran;
 
-// definicja struktury zadania ułatwiająca obsługiwanie wielu pól
+// defincja struktury zadania ulatwiajaca obslugiwanie wielu pol
 typedef struct
 {
     char nazwa[ROZMIAR_NAZWA];
@@ -20,7 +20,7 @@ typedef struct
     char data_wykonania[ROZMIAR_DATA_WYKONANIA];
 } Zadanie;
 
-// ustawienie składni polecenia do egzekucji w zależności od systemu operacyjnego
+// ustawienie składni polecenia do egzekucji w zalezności od systemu operacyjnego
 void ustaw_komende_do_czyszczenia(){    
     #ifdef _WIN32
         wyczysc_ekran = "cls";
@@ -29,7 +29,7 @@ void ustaw_komende_do_czyszczenia(){
     #endif
 }
 
-// utworzenie i zwrócenie struktury zadań utworzonej na podstawie danych wprowadzonych
+// utworzenie i zwrocenie struktury zadań utworzonej na podstawie danych wprowadzonych
 Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char data_wykonania[ROZMIAR_DATA_WYKONANIA]){
     Zadanie nowe_zadanie;
     strcpy(nowe_zadanie.nazwa, nazwa);
@@ -63,7 +63,7 @@ void wyczysc_bufor(){
     while((c = getchar()) != '\n' && c != EOF);
 }
 
-// funkcja sprawdza, czy podana data jest prawidłowego formatu "DD-MM-YYYY" oraz czy data istnieje (nie przepuści daty np. 29-02-2025)
+// funkcja sprawdza czy podana data jest prawidłowego formatu "DD-MM-YYYY" oraz czy data istnieje (nie przepuści daty np. 29-02-2025)
 bool walidator_daty(char *data){
     int rok;
     int miesiac;
@@ -118,13 +118,13 @@ bool walidator_daty(char *data){
 void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(char* data)){
     bool poprawny_input;
     do{
-	poprawny_input = true;
+        poprawny_input = true;
         printf("%s", polecenie);
         fgets(bufor, rozmiar, stdin);
         int dlugosc = strlen(bufor);
         if(strchr(bufor, '\n') == NULL) {
             wyczysc_bufor();
-	        system(wyczysc_ekran);
+            system(wyczysc_ekran);
             printf("Wprowadzony tekst jest za długi, spróbuj ponownie. \n\n");
             poprawny_input = false;
         }
@@ -132,16 +132,16 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(
             bufor[strcspn(bufor, "\n")] = '\0';
         }
         if(dlugosc <= 1){
-	    system(wyczysc_ekran);
+            system(wyczysc_ekran);
             printf("Błąd: nie wprowadzono niczego, spróbuj ponownie. \n\n");
             poprawny_input = false;
         }
         if(walidator != NULL && !walidator(bufor)){
-		system(wyczysc_ekran);
-                printf("Podano nieprawidłowy format danych, spróbuj ponownie.  \n\n");
-                poprawny_input = false;
+            system(wyczysc_ekran);
+            printf("Podano nieprawidłowy format danych, spróbuj ponownie.  \n\n");
+            poprawny_input = false;
         }
-    }while(!poprawny_input);
+    } while(!poprawny_input);
 }
 
 // wstawienie zadania do listy zadań
@@ -178,7 +178,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
     else{
         printf("\n\n");
         wstaw_linie();    
-        printf("|%s|%-30s|%-100s|%-12s| \n", naglowki[0], naglowki[1], naglowki[2], naglowki[3]);
+        printf("|%-3s|%-30s|%-100s|%-14s| \n", naglowki[0], naglowki[1], naglowki[2], naglowki[3]);
         wstaw_linie();
         for(int i = 0; i < rozmiar; i++){
             printf("|%-3d|%-30s|%-100s|%-14s| \n", i+1, lista_zadan[i].nazwa, lista_zadan[i].opis, lista_zadan[i].data_wykonania);
@@ -203,7 +203,7 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     }
     nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
     if(nowa_lista_zadan == NULL){
-        printf("Problem z alokacją nowej listy. \n");
+        printf("Problem z alokacja nowej listy. \n");
         exit(1);
     }
     index -= 1;
@@ -232,7 +232,7 @@ void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
     printf("Usunięto wszystkie zadania. \n\n");
 }
 
-// główna funkcja programu działająca w formie pętli, która się wykonuje dopóki użytkownik nie zdecyduje się opuścić programu (wybierając opcję 5 z menu)
+// głowna funkcja programu działająca w formie pętli, ktora sie wykonuje dopoki uzytkownik nie zdecyduje sie opuscic programu (wybierając opcję 5 z menu)
 int main(){
     ustaw_komende_do_czyszczenia();
     setlocale(LC_ALL, "pl-PL");
@@ -258,4 +258,17 @@ int main(){
             usun_wszystkie_zadania(&lista_zadan, &rozmiar_listy);
             break;
         case '3':
-            usun_zadanie(&lista_z
+            usun_zadanie(&lista_zadan, &rozmiar_listy);
+            break;
+        case '2':
+            wyswietl_liste_zadan(lista_zadan, rozmiar_listy);
+            break;
+        case '1':
+            dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
+            break;
+        default:
+            system(wyczysc_ekran);
+            printf("Błąd: nie ma takiego wyboru, spróbuj ponownie. \n\n");
+        }
+    }
+}
