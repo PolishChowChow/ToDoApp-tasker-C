@@ -1,3 +1,4 @@
+// definicja bibliotek i stałych
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -11,6 +12,7 @@
 
 const char* wyczysc_ekran;
 
+// definicja struktury zadania ułatwiająca obsługiwanie wielu pól
 typedef struct
 {
     char nazwa[ROZMIAR_NAZWA];
@@ -18,6 +20,7 @@ typedef struct
     char data_wykonania[ROZMIAR_DATA_WYKONANIA];
 } Zadanie;
 
+// ustawienie składni polecenia do egzekucji w zależności od systemu operacyjnego
 void ustaw_komende_do_czyszczenia(){    
     #ifdef _WIN32
         wyczysc_ekran = "cls";
@@ -26,6 +29,7 @@ void ustaw_komende_do_czyszczenia(){
     #endif
 }
 
+// utworzenie i zwrócenie struktury zadań utworzonej na podstawie danych wprowadzonych
 Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char data_wykonania[ROZMIAR_DATA_WYKONANIA]){
     Zadanie nowe_zadanie;
     strcpy(nowe_zadanie.nazwa, nazwa);
@@ -34,6 +38,7 @@ Zadanie stworz_zadanie(char nazwa[ROZMIAR_NAZWA], char opis[ROZMIAR_OPIS], char 
     return nowe_zadanie;
 };
 
+// wyświetlenie linii w terminalu wraz z "przedziałkami"
 void wstaw_linie(){
     for(int i = 0; i < 152; i++){
         switch (i)
@@ -52,11 +57,13 @@ void wstaw_linie(){
     printf("\n");
 }
 
+// czyszczenie buforu (wspomaga walidację danych i wprowadzanie ich)
 void wyczysc_bufor(){
     int c;
     while((c = getchar()) != '\n' && c != EOF);
 }
 
+// funkcja sprawdza, czy podana data jest prawidłowego formatu "DD-MM-YYYY" oraz czy data istnieje (nie przepuści daty np. 29-02-2025)
 bool walidator_daty(char *data){
     int rok;
     int miesiac;
@@ -107,6 +114,7 @@ bool walidator_daty(char *data){
     return true;
 }
 
+// podstawowy walidator wprowadzania danych użyty do każdego pola struktury Zadanie
 void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(char* data)){
     bool poprawny_input;
     do{
@@ -116,7 +124,7 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(
         int dlugosc = strlen(bufor);
         if(strchr(bufor, '\n') == NULL) {
             wyczysc_bufor();
-	    system(wyczysc_ekran);
+	        system(wyczysc_ekran);
             printf("Wprowadzony tekst jest za długi, spróbuj ponownie. \n\n");
             poprawny_input = false;
         }
@@ -136,7 +144,7 @@ void sprawdz_input(char *bufor, int rozmiar, char *polecenie, bool (*walidator)(
     }while(!poprawny_input);
 }
 
-
+// wstawienie zadania do listy zadań
 void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     char nazwa[ROZMIAR_NAZWA];
     char opis[ROZMIAR_OPIS];
@@ -156,6 +164,7 @@ void dodaj_zadanie_do_listy(Zadanie **lista_zadan, int *rozmiar){
     printf("Utworzono nowe zadanie. \n\n");
 }
 
+// wyświetlanie listy zadań w formie tabelarycznej
 void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
     char naglowki[4][200] = {
         "Lp.",
@@ -178,6 +187,7 @@ void wyswietl_liste_zadan(Zadanie *lista_zadan, int rozmiar){
     }
 }
 
+// usuwanie zadania z listy bazując na indeksie pokazanym przy wyświetlaniu listy zadań
 void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     int index;
     Zadanie *nowa_lista_zadan;
@@ -193,7 +203,7 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     }
     nowa_lista_zadan = (Zadanie*)malloc((*rozmiar - 1) * sizeof(Zadanie));
     if(nowa_lista_zadan == NULL){
-        printf("Problem z alokacja nowej listy. \n");
+        printf("Problem z alokacją nowej listy. \n");
         exit(1);
     }
     index -= 1;
@@ -211,6 +221,7 @@ void usun_zadanie(Zadanie **lista_zadan, int *rozmiar){
     printf("Zadanie zostało usunięte. \n\n");
 }
 
+// całkowite czyszczenie listy zadań
 void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
     if (*lista_zadan != NULL){
         free(*lista_zadan);  
@@ -221,6 +232,7 @@ void usun_wszystkie_zadania(Zadanie **lista_zadan, int *rozmiar){
     printf("Usunięto wszystkie zadania. \n\n");
 }
 
+// główna funkcja programu działająca w formie pętli, która się wykonuje dopóki użytkownik nie zdecyduje się opuścić programu (wybierając opcję 5 z menu)
 int main(){
     ustaw_komende_do_czyszczenia();
     setlocale(LC_ALL, "pl-PL");
@@ -246,17 +258,4 @@ int main(){
             usun_wszystkie_zadania(&lista_zadan, &rozmiar_listy);
             break;
         case '3':
-            usun_zadanie(&lista_zadan, &rozmiar_listy);
-            break;
-        case '2':
-            wyswietl_liste_zadan(lista_zadan, rozmiar_listy);
-            break;
-        case '1':
-            dodaj_zadanie_do_listy(&lista_zadan, &rozmiar_listy);
-            break;
-        default:
-            system(wyczysc_ekran);
-            printf("Błąd: nie ma takiego wyboru, spróbuj ponownie. \n\n");
-        }
-    }
-}
+            usun_zadanie(&lista_z
